@@ -13,45 +13,53 @@ from utils.parsers import parse_subscribe
 # 传入 urls dict
 # 返回节点列表
 def parse_subscribe_url(urls):
-    # 初始化节点列表
     nodes = []
-    # 获取订阅内容
     subscribe_data = asyncio.run(cached_multi_threaded_get(urls))
-    # 解析订阅内容
     for content in subscribe_data:
         if content is not None:
             nodes.extend(parse_subscribe(content))
-    # 返回节点列表
     return nodes
 
 # Flask 提供 API 接口，用于转换订阅格式为 sing-box 配置
 app = Flask(__name__)
 
-# 接受 POST 请求，请求数据为 JSON 格式
-@app.route('/api/v1/sing-box', methods=['POST'])
+# 接受 POST 和 GET 请求
+# POST 请求需要传入 urls 和 relay_outs 参数
+# urls 为订阅链接，relay_outs 为转发节点订阅链接
+# GET 请求需要传入 urls 参数
+@app.route('/api/v1/sing-box', methods=['POST', 'GET'])
 def sing_box():
     if request.method == 'POST':
-        # 获取 POST 数据
         data = request.get_json()
         if 'version' in data:
             version = data['version']
         else:
             version = '1.8'
-        # 解析订阅链接
+
         node_list = parse_subscribe_url(data['urls'])
-        # 如 node_list 为空，返回 500
         if not node_list:
             return 'Internal Server Error', 500
-        # 判断是否有中继节点
+
         if 'relay_outs' in data:
-            # 解析中继节点
             relay_outs = parse_subscribe_url([data['relay_outs']])
-            # 生成 sing-box 配置
             sing_box = generate_sing_box_config(node_list, version=version, relay_outs=relay_outs)
         else:
              sing_box = generate_sing_box_config(node_list, version=version)
-        # 返回 sing-box 配置
         return json.dumps(sing_box, ensure_ascii=False)
+    elif request.method == 'GET':
+        url = request.args.get('url')
+        version = request.args.get('version')
+        if url is None:
+            return 'Bad Request', 400
+        else:
+            node_list = parse_subscribe_url([url])
+            if not node_list:
+                return 'Internal Server Error', 500
+            if version is not None:
+                sing_box = generate_sing_box_config(node_list, version=version)
+            else:
+                sing_box = generate_sing_box_config(node_list, version='1.8')
+            return json.dumps(sing_box, ensure_ascii=False)
     else:
         return 'Method Not Allowed'
 
