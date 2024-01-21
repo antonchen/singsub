@@ -1,0 +1,35 @@
+# Git
+.git
+.gitignore
+.gitattributes
+README.*
+
+# Docker
+docker-compose.yml
+Dockerfile
+.docker
+.dockerignore
+
+# Python cache
+**/__pycache__/
+**/*.py[cod]
+
+# Virtual environment
+.env
+.venv/
+venv/
+
+# PyCharm
+.idea
+
+# Python mode for VIM
+.ropeproject
+**/.ropeproject
+
+# Vim swap files
+**/*.swp
+
+# VS Code
+.vscode/
+
+cache/*

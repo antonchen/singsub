@@ -1,0 +1,475 @@
+{
+    "log": {
+        "level": "error",
+        "timestamp": true
+    },
+    "experimental": {
+        "clash_api": {
+            "external_controller": "0.0.0.0:80",
+            "external_ui": "ui",
+            "secret": "",
+            "external_ui_download_url": "https://github.com/MetaCubeX/Yacd-meta/archive/gh-pages.zip",
+            "external_ui_download_detour": "Global",
+            "default_mode": "rule"
+        },
+        "cache_file": {
+            "enabled": true,
+            "store_fakeip": false
+        }
+    },
+    "dns": {
+        "servers": [
+            {
+                "tag": "remote",
+                "address": "tcp://8.8.8.8",
+                "address_strategy": "ipv4_only",
+                "strategy": "ipv4_only",
+                "detour": "Global"
+            },
+            {
+                "tag": "dns-unlock",
+                "address": "1.1.1.1",
+                "address_strategy": "ipv4_only",
+                "strategy": "ipv4_only",
+                "detour": "SG"
+            },
+            {
+                "tag": "direct",
+                "address": "119.29.29.29",
+                "address_strategy": "ipv4_only",
+                "strategy": "prefer_ipv4",
+                "detour": "direct"
+            },
+            {
+                "tag": "block",
+                "address": "rcode://success"
+            }
+        ],
+        "rules": [
+            {
+                "domain": [
+                    "ghproxy.com",
+                    "cdn.jsdelivr.net",
+                    "testingcf.jsdelivr.net",
+                    "myip.la"
+                ],
+                "disable_cache": true,
+                "server": "direct"
+            },
+            {
+                "rule_set": [
+                    "cn",
+                    "steam@cn",
+                    "google-cn",
+                    "apple-cn"
+                ],
+                "server": "direct"
+            },
+            {
+                "rule_set": "openai",
+                "server": "dns-unlock"
+            },
+            {
+                "clash_mode": "direct",
+                "server": "direct"
+            },
+            {
+                "clash_mode": "global",
+                "server": "remote"
+            }
+        ],
+        "disable_cache": true,
+        "independent_cache": false,
+        "reverse_mapping": false,
+        "disable_expire": false,
+        "final": "remote"
+    },
+    "inbounds": [
+        {
+            "type": "mixed",
+            "tag": "mixed-in",
+            "listen": "::",
+            "listen_port": 1080,
+            "sniff": true,
+            "sniff_override_destination": true
+        },
+        {
+            "type": "tproxy",
+            "tag": "tproxy-in",
+            "listen": "::",
+            "listen_port": 7893,
+            "sniff": true,
+            "sniff_override_destination": true,
+            "udp_fragment": true,
+            "udp_timeout": "3m"
+        },
+        {
+            "type": "direct",
+            "tag": "dns-in",
+            "listen": "127.0.0.1",
+            "listen_port": 5335,
+            "sniff": true
+        }
+    ],
+    "outbounds": [
+        {
+            "tag": "Global",
+            "type": "selector",
+            "outbounds": [
+                "{relay_outs}",
+                "Auto",
+                "Manual",
+                "direct"
+            ]
+        },
+        {
+            "tag": "Auto",
+            "type": "selector",
+            "outbounds": [
+                "direct"
+            ]
+        },
+        {
+            "tag": "Manual",
+            "type": "selector",
+            "outbounds": [
+                "{all}",
+                "direct"
+            ]
+        },
+        {
+            "tag": "OpenAI",
+            "type": "selector",
+            "default": "SG"
+        },
+        {
+            "tag": "OneDrive",
+            "type": "selector",
+            "outbounds": [
+                "Global",
+                "Auto",
+                "Manual",
+                "direct"
+            ]
+        },
+        {
+            "tag": "GlobalMedia",
+            "type": "selector",
+            "outbounds": [
+                "Auto",
+                "Manual",
+                "Global"
+            ]
+        },
+        {
+            "tag": "HK",
+            "type": "urltest",
+            "outbounds": [
+                "{all}"
+            ],
+            "url": "https://www.gstatic.com/generate_204",
+            "interval": "3m",
+            "tolerance": 50,
+            "filter": [
+                {
+                    "action": "include",
+                    "keywords": [
+                        "HK|hk|HK|港|HongKong"
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "TW",
+            "type": "urltest",
+            "outbounds": [
+                "{all}"
+            ],
+            "url": "https://www.gstatic.com/generate_204",
+            "interval": "3m",
+            "tolerance": 50,
+            "filter": [
+                {
+                    "action": "include",
+                    "keywords": [
+                        "TW|tw|TW|臺灣|台|Taiwan"
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "KR",
+            "type": "urltest",
+            "outbounds": [
+                "{all}"
+            ],
+            "url": "https://www.gstatic.com/generate_204",
+            "interval": "3m",
+            "tolerance": 50,
+            "filter": [
+                {
+                    "action": "include",
+                    "keywords": [
+                        "韩国|韓國|首尔|韩|韓|春川|KOR|KR|Kr|(?<!North\\s)Korea"
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "SG",
+            "type": "urltest",
+            "outbounds": [
+                "{all}"
+            ],
+            "url": "https://www.gstatic.com/generate_204",
+            "interval": "3m",
+            "tolerance": 50,
+            "filter": [
+                {
+                    "action": "include",
+                    "keywords": [
+                        "SG|sg|SG|狮|Singapore"
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "JP",
+            "type": "urltest",
+            "outbounds": [
+                "{all}"
+            ],
+            "url": "https://www.gstatic.com/generate_204",
+            "interval": "3m",
+            "tolerance": 50,
+            "filter": [
+                {
+                    "action": "include",
+                    "keywords": [
+                        "JP|jp|JP|日|Japan"
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "US",
+            "type": "urltest",
+            "outbounds": [
+                "{all}"
+            ],
+            "url": "https://www.gstatic.com/generate_204",
+            "interval": "3m",
+            "tolerance": 50,
+            "filter": [
+                {
+                    "action": "include",
+                    "keywords": [
+                        "US|us|US|美|United States"
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "Other",
+            "type": "selector",
+            "outbounds": [
+                "{all}"
+            ],
+            "filter": [
+                {
+                    "action": "exclude",
+                    "keywords": [
+                        "HK|hk|HK|香|TW|tw|TW|台|SG|sg|SG|狮|JP|jp|JP|日|US|us|US|美|网站|剩余|流量|过期|时间|期|地址"
+                    ]
+                }
+            ]
+        },
+        {
+            "tag": "CN",
+            "type": "selector",
+            "outbounds": [
+                "direct",
+                "Global"
+            ],
+            "interrupt_exist_connections": true
+        },
+        {
+            "type": "direct",
+            "tag": "direct"
+        },
+        {
+            "type": "dns",
+            "tag": "dns-out"
+        },
+        {
+            "type": "block",
+            "tag": "block"
+        }
+    ],
+    "route": {
+        "default_mark": 255,
+        "final": "Global",
+        "rules": [
+            {
+                "inbound": "dns-in",
+                "protocol": "dns",
+                "outbound": "dns-out"
+            },
+            {
+                "network": "udp",
+                "port": 443,
+                "outbound": "block"
+            },
+            {
+                "clash_mode": "direct",
+                "outbound": "direct"
+            },
+            {
+                "clash_mode": "global",
+                "outbound": "Global"
+            },
+            {
+                "rule_set": "openai",
+                "outbound": "OpenAI"
+            },
+            {
+                "rule_set": "onedrive",
+                "outbound": "OneDrive"
+            },
+            {
+                "ip_is_private": true,
+                "outbound": "CN"
+            },
+            {
+                "rule_set": [
+                    "win-update",
+                    "apple-cn",
+                    "steam@cn",
+                    "google-cn",
+                    "cn"
+                ],
+                "domain": [
+                    "api.ashat.org",
+                    "tgapi.ashat.org",
+                    "production.cloudflare.docker.com"
+                ],
+                "outbound": "CN"
+            },
+            {
+                "rule_set": [
+                    "jp-media",
+                    "reddit",
+                    "ip-jp"
+                ],
+                "outbound": "JP"
+            },
+            {
+                "rule_set": [
+                    "ip-netflix",
+                    "global-media"
+                ],
+                "outbound": "GlobalMedia"
+            }
+        ],
+        "rule_set": [
+            {
+                "tag": "private",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/private.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "win-update",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/win-update.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "apple-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/apple-cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "steam@cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/steam@cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "google-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/google-cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "openai",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/openai.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "reddit",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/reddit.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "onedrive",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/onedrive.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "jp-media",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/jp-media.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "global-media",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/global-media.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "ip-netflix",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/netflix.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "ip-cn",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "ip-jp",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/jp.srs",
+                "download_detour": "direct"
+            }
+        ]
+    }
+}
