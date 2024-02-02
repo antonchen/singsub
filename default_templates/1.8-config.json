@@ -27,13 +27,6 @@
                 "detour": "Global"
             },
             {
-                "tag": "dns-unlock",
-                "address": "1.1.1.1",
-                "address_strategy": "ipv4_only",
-                "strategy": "ipv4_only",
-                "detour": "SG"
-            },
-            {
                 "tag": "direct",
                 "address": "119.29.29.29",
                 "address_strategy": "ipv4_only",
@@ -64,10 +57,6 @@
                     "apple-cn"
                 ],
                 "server": "direct"
-            },
-            {
-                "rule_set": "openai",
-                "server": "dns-unlock"
             },
             {
                 "clash_mode": "direct",
@@ -140,7 +129,7 @@
         {
             "tag": "OpenAI",
             "type": "selector",
-            "default": "SG"
+            "default": "TW"
         },
         {
             "tag": "OneDrive",
@@ -338,7 +327,7 @@
             },
             {
                 "ip_is_private": true,
-                "outbound": "CN"
+                "outbound": "direct"
             },
             {
                 "rule_set": [

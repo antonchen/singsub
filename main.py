@@ -4,6 +4,9 @@
 
 import asyncio
 import json
+import os
+import sys
+import shutil
 from flask import Flask, request
 from utils.singbox import generate_sing_box_config
 from utils.tool import cached_multi_threaded_get
@@ -65,4 +68,9 @@ def sing_box():
 
 
 if __name__ == '__main__':
+    templates_path = os.path.dirname(os.path.abspath(sys.argv[0])) + '/templates'
+    default_templates_path = os.path.dirname(os.path.abspath(sys.argv[0])) + '/default_templates'
+    if not os.path.exists(templates_path) or not os.listdir(templates_path):
+        shutil.copytree(default_templates_path, templates_path, dirs_exist_ok=True)
+
     app.run(host='0.0.0.0', port=5000)

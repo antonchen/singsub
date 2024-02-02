@@ -9,7 +9,7 @@ from utils.tool import regex_patterns, is_ip
 
 def read_template(version='1.8'):
     """读取模板"""
-    with open(os.path.dirname(os.path.abspath(sys.argv[0])) + '/template/' + str(version) + '-config.json', 'r', encoding='utf-8') as f:
+    with open(os.path.dirname(os.path.abspath(sys.argv[0])) + '/templates/' + str(version) + '-config.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
 def match_keywords(filter, nodes):
