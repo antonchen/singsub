@@ -76,7 +76,7 @@ def generate_sing_box_config(nodes,version,relay_outs=None):
     config['dns'] = template['dns']
     config['inbounds'] = template['inbounds']
     config['outbounds'] = []
-    auto_tags = []
+    group_tags = []
     for t_ob in template["outbounds"]:
         if t_ob.get("outbounds"):
             temp_group = t_ob
@@ -95,19 +95,21 @@ def generate_sing_box_config(nodes,version,relay_outs=None):
                 # 如果节点组为空，则不添加
                 if temp_group["outbounds"]:
                     config['outbounds'].append(temp_group)
-                    if temp_group.get("tag") != "Manual" or temp_group.get("tag", None) == None:
-                        auto_tags.append(temp_group["tag"])
+                    if temp_group.get("is_group", True) is False:
+                        temp_group.pop("is_group")
+                    elif temp_group.get("is_group", True) or temp_group.get("tag", None) == None:
+                        group_tags.append(temp_group["tag"])
             else:
                 config['outbounds'].append(t_ob)
         else:
             config['outbounds'].append(t_ob)
     for ob in config['outbounds']:
-        if ob.get('tag') == 'Auto':
-            auto_tags.append('direct')
-            ob['outbounds'] = auto_tags
-        if ob.get('tag') == 'OpenAI':
-            auto_tags.remove('direct')
-            ob['outbounds'] = auto_tags
+        if ob.get('in_group', False):
+            if ob.get('outbounds'):
+                ob['outbounds'].extend(group_tags)
+            else:
+                ob['outbounds'] = group_tags
+            ob.pop('in_group')
 
     if relay_outs:
         relay_outs_node = set_relay_out(relay_outs)

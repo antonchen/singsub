@@ -52,9 +52,10 @@
             {
                 "rule_set": [
                     "cn",
-                    "steam@cn",
+                    "steam-cn",
                     "google-cn",
-                    "apple-cn"
+                    "apple-cn",
+                    "tracker"
                 ],
                 "server": "direct"
             },
@@ -85,7 +86,7 @@
         {
             "type": "tproxy",
             "tag": "tproxy-in",
-            "listen": "::",
+            "listen": "0.0.0.0",
             "listen_port": 7893,
             "sniff": true,
             "sniff_override_destination": true,
@@ -114,9 +115,7 @@
         {
             "tag": "Auto",
             "type": "selector",
-            "outbounds": [
-                "direct"
-            ]
+            "in_group": true
         },
         {
             "tag": "Manual",
@@ -124,22 +123,31 @@
             "outbounds": [
                 "{all}",
                 "direct"
+            ],
+            "is_group": false
+        },
+        {
+            "tag": "HighTraffic",
+            "type": "selector",
+            "default": "US2",
+            "outbounds": [
+                "{all}"
+            ],
+            "is_group": false,
+            "filter": [
+                {
+                    "action": "include",
+                    "keywords": [
+                        "US|us|US|美|United States"
+                    ]
+                }
             ]
         },
         {
             "tag": "OpenAI",
             "type": "selector",
-            "default": "TW"
-        },
-        {
-            "tag": "OneDrive",
-            "type": "selector",
-            "outbounds": [
-                "Global",
-                "Auto",
-                "Manual",
-                "direct"
-            ]
+            "default": "US",
+            "in_group": true
         },
         {
             "tag": "GlobalMedia",
@@ -148,7 +156,8 @@
                 "Auto",
                 "Manual",
                 "Global"
-            ]
+            ],
+            "in_group": true
         },
         {
             "tag": "HK",
@@ -322,8 +331,11 @@
                 "outbound": "OpenAI"
             },
             {
-                "rule_set": "onedrive",
-                "outbound": "OneDrive"
+                "rule_set": [
+                    "onedrive",
+                    "sharing"
+                ],
+                "outbound": "HighTraffic"
             },
             {
                 "ip_is_private": true,
@@ -332,8 +344,9 @@
             {
                 "rule_set": [
                     "win-update",
+                    "tracker",
                     "apple-cn",
-                    "steam@cn",
+                    "steam-cn",
                     "google-cn",
                     "cn"
                 ],
@@ -376,6 +389,20 @@
                 "download_detour": "direct"
             },
             {
+                "tag": "tracker",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/tracker.srs",
+                "download_detour": "direct"
+            },
+            {
+                "tag": "sharing",
+                "type": "remote",
+                "format": "binary",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/sharing.srs",
+                "download_detour": "direct"
+            },
+            {
                 "tag": "win-update",
                 "type": "remote",
                 "format": "binary",
@@ -390,10 +417,10 @@
                 "download_detour": "direct"
             },
             {
-                "tag": "steam@cn",
+                "tag": "steam-cn",
                 "type": "remote",
                 "format": "binary",
-                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/steam@cn.srs",
+                "url": "https://testingcf.jsdelivr.net/gh/antonchen/rules-dat@release/sing/steam-cn.srs",
                 "download_detour": "direct"
             },
             {
