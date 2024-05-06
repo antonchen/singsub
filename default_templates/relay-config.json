@@ -214,7 +214,7 @@
                 {
                     "action": "include",
                     "keywords": [
-                        "SG|sg|SG|狮|Singapore"
+                        "SG|sg|SG|新加坡|狮|Singapore"
                     ]
                 }
             ]
@@ -265,7 +265,7 @@
                 {
                     "action": "exclude",
                     "keywords": [
-                        "HK|hk|HK|香|TW|tw|TW|台|SG|sg|SG|狮|JP|jp|JP|日|US|us|US|美|网站|剩余|流量|过期|时间|期|地址"
+                        "HK|hk|HK|香|TW|tw|TW|台|韩国|韓國|首尔|韩|韓|春川|KOR|KR|Kr|(?<!North\\s)Korea|SG|sg|SG|新加坡|狮|JP|jp|JP|日|US|us|US|美|网站|剩余|流量|过期|时间|期|地址"
                     ]
                 }
             ]
