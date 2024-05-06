@@ -7,9 +7,9 @@ import os
 import sys
 from utils.tool import regex_patterns, is_ip
 
-def read_template(version='1.8'):
+def read_template(config='default'):
     """读取模板"""
-    with open(os.path.dirname(os.path.abspath(sys.argv[0])) + '/templates/' + str(version) + '-config.json', 'r', encoding='utf-8') as f:
+    with open(os.path.dirname(os.path.abspath(sys.argv[0])) + '/templates/' + str(config) + '-config.json', 'r', encoding='utf-8') as f:
         return json.load(f)
 
 def match_keywords(filter, nodes):
@@ -67,9 +67,9 @@ def get_node_domain(nodes):
 
     return list(set(node_domains))
 
-def generate_sing_box_config(nodes,version,relay_outs=None):
+def generate_sing_box_config(nodes,config,relay_outs=None):
     """生成 sing-box 配置"""
-    template = read_template(version)
+    template = read_template(config)
     config = {}
     config['log'] = template['log']
     config['experimental'] = template['experimental']

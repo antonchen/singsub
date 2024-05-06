@@ -34,34 +34,34 @@ app = Flask(__name__)
 def sing_box():
     if request.method == 'POST':
         data = request.get_json()
-        if 'version' in data:
-            version = data['version']
+        if 'config' in data:
+            config = data['config']
         else:
-            version = '1.8'
+            config = 'default'
 
         node_list = parse_subscribe_url(data['urls'])
         if not node_list:
             return 'Internal Server Error', 500
 
         if 'relay_outs' in data:
-            relay_outs = parse_subscribe_url([data['relay_outs']])
-            sing_box = generate_sing_box_config(node_list, version=version, relay_outs=relay_outs)
+            relay_outs = parse_subscribe(data['relay_outs'])
+            sing_box = generate_sing_box_config(node_list, config=config, relay_outs=relay_outs)
         else:
-             sing_box = generate_sing_box_config(node_list, version=version)
+             sing_box = generate_sing_box_config(node_list, config=config)
         return json.dumps(sing_box, ensure_ascii=False)
     elif request.method == 'GET':
         url = request.args.get('url')
-        version = request.args.get('version')
+        config = request.args.get('config')
         if url is None:
             return 'Bad Request', 400
         else:
             node_list = parse_subscribe_url([url])
             if not node_list:
                 return 'Internal Server Error', 500
-            if version is not None:
-                sing_box = generate_sing_box_config(node_list, version=version)
+            if config is not None:
+                sing_box = generate_sing_box_config(node_list, config=config)
             else:
-                sing_box = generate_sing_box_config(node_list, version='1.8')
+                sing_box = generate_sing_box_config(node_list, config='default')
             return json.dumps(sing_box, ensure_ascii=False)
     else:
         return 'Method Not Allowed'
