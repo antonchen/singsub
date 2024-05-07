@@ -11,6 +11,7 @@ from flask import Flask, request
 from utils.singbox import generate_sing_box_config
 from utils.tool import cached_multi_threaded_get
 from utils.parsers import parse_subscribe
+from utils.clash import sing_box_to_clash_node
 
 # 解析订阅链接
 # 传入 urls dict
@@ -66,6 +67,16 @@ def sing_box():
     else:
         return 'Method Not Allowed'
 
+@app.route('/api/v1/clash-node', methods=['POST', 'GET'])
+def clash_node():
+    urls = []
+    if request.method == 'POST':
+        data = request.get_json()
+        urls.extend(data['urls'])
+    elif request.method == 'GET':
+        urls.extend(request.args.get('urls').split('|'))
+    nodes = parse_subscribe_url(urls)
+    return sing_box_to_clash_node(nodes)
 
 if __name__ == '__main__':
     templates_path = os.path.dirname(os.path.abspath(sys.argv[0])) + '/templates'
