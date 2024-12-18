@@ -55,11 +55,11 @@ def ss(parsed_url):
     node = {}
     node['type'] = 'shadowsocks'
     node['tag'] = nospace(remove_emoji(unquote(parsed_url.fragment)))
-    node['server'] = parsed_url.hostname
-    node['server_port'] = parsed_url.port
-    cipher_password = b64decode(parsed_url.username)
-    node['password'] = cipher_password.split(':')[1]
-    node['method'] = cipher_password.split(':')[0]
+    url = urlparse("ss://" + b64decode(parsed_url.netloc))
+    node['server'] = url.hostname
+    node['server_port'] = url.port
+    node['password'] = url.password
+    node['method'] = url.username
     params = parse_qs(parsed_url.query)
     if 'plugin' in params:
         node['plugin'] = params['plugin'][0].split(';')[0]

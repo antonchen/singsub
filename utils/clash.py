@@ -3,26 +3,39 @@
 # Author: Anton Chen <contact@antonchen.com>
 import json
 
-def sing_box_to_clash_node(node_list):
-    """Sing-box node to Clash node"""
-    """Only support vless node"""
-    if node_list[0]['type'] != 'vless':
-        return 'Only support vless node'
+def generate_clash_node(node_list):
+    """转换订阅为 Clash 节点格式"""
+    """Support ss or vless node"""
+    if node_list[0]['type'] != 'vless' and node_list[0]['type'] != 'shadowsocks':
+        print(node_list[0]['type'])
+        return 'Support ss or vless node'
     clash_nodes = 'proxies:\n'
     for node in node_list:
-        clash_node = {
-            'type': node['type'],
-            'name': node['tag'],
-            'server': node['server'],
-            'port': node['server_port'],
-            'uuid': node['uuid'],
-            'flow': node['flow'],
-            'servername': node['tls']['server_name'],
-            'tls': node['tls']['enabled'],
-            'packet-encoding': node['packet_encoding'],
-            'udp': True,
-            'skip-cert-verify': False
-            
-        }
+        if node['type'] == 'vless':
+            clash_node = {
+                'type': node['type'],
+                'name': node['tag'],
+                'server': node['server'],
+                'port': node['server_port'],
+                'uuid': node['uuid'],
+                'flow': node['flow'],
+                'servername': node['tls']['server_name'],
+                'tls': node['tls']['enabled'],
+                'packet-encoding': node['packet_encoding'],
+                'udp': True,
+                'skip-cert-verify': False
+            }
+        elif node['type'] == 'shadowsocks':
+            clash_node = {
+                'type': 'ss',
+                'name': node['tag'],
+                'server': node['server'],
+                'port': node['server_port'],
+                'cipher': node['method'],
+                'password': node['password'],
+                'udp': True,
+                'udp-over-tcp': True,
+                'udp-over-tcp-version': 2
+            }
         clash_nodes += '- ' + json.dumps(clash_node) + '\n'
     return clash_nodes
