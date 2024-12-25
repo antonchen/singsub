@@ -91,24 +91,6 @@ def ssr(parsed_url):
                 node[params_dict[key]] = params[key][0]
             
     return node
-
-# 生成 vmess 节点
-# {
-#     "tag": "🇺🇸 奈飞  tiktok专线04",
-#     "type": "trojan",
-#     "server": "y31.huamaoyun.live",
-#     "server_port": 2087,
-#     "password": "1faaefc9-0ddd-48d6-ba03-45bd3c9a8ad5",
-#     "tls": {
-#     "enabled": true,
-#     "insecure": true,
-#     "server_name": "a609.huamaoyun.live"
-#     },
-#     "transport": {
-#     "type": "grpc",
-#     "service_name": "n"
-#     }
-# }
     
 def vmess(url):
     node = {}
@@ -122,9 +104,9 @@ def vmess(url):
     node['packet_encoding'] = 'xudp'
     if vmess_info.get('scy'):
         if vmess_info['scy'] != 'http' or vmess_info['scy'] != 'gun':
-            node['network'] = 'auto'
+            node['security'] = 'auto'
         else:
-            node['network'] = vmess_info['scy']
+            node['security'] = vmess_info['scy']
     if vmess_info.get('tls') and vmess_info['tls'] != '' and vmess_info['tls'] != 'none':
         node['tls'] = {
             'enabled': True,
@@ -178,24 +160,6 @@ def vmess(url):
             node['multiplex']['padding'] = True
     return node
 
-# 生成 vless 节点
-# {
-#     "tag": "🇺🇸 美西4K2",
-#     "type": "vless",
-#     "server": "f2.huamaoyun.live",
-#     "server_port": 8080,
-#     "uuid": "1faaefc9-0ddd-48d6-ba03-45bd3c9a8ad5",
-#     "packet_encoding": "xudp",
-#     "transport": {
-#     "type": "ws",
-#     "path": "/",
-#     "headers": {
-#         "Host": "a602.huamaoyun.live"
-#     },
-#     "early_data_header_name": "Sec-WebSocket-Protocol",
-#     "max_early_data": 2048
-#     }
-# },
 def vless(parsed_url):
     node = {}
     node['type'] = 'vless'
@@ -271,24 +235,7 @@ def vless(parsed_url):
             node['multiplex']['padding'] = True
     
     return node
-    
-# 生成 trojan 节点
-# {
-#     "tag": "🇯🇵 日本东京04",
-#     "type": "trojan",
-#     "server": "y27.huamaoyun.live",
-#     "server_port": 2053,
-#     "password": "1faaefc9-0ddd-48d6-ba03-45bd3c9a8ad5",
-#     "tls": {
-#     "enabled": true,
-#     "insecure": true,
-#     "server_name": "a1031.huamaoyun.live"
-#     },
-#     "transport": {
-#     "type": "grpc",
-#     "service_name": "s"
-#     }
-# }
+
 def trojan(parsed_url):
     node = {}
     node['type'] = 'trojan'
