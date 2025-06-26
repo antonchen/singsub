@@ -167,7 +167,10 @@ def vless(parsed_url):
     node['server'] = parsed_url.hostname
     node['server_port'] = parsed_url.port
     node['uuid'] = parsed_url.username
-    params = parse_qs(parsed_url.query)
+    params = dict(
+        (k, v if len(v) > 1 else v[0])
+        for k, v in parse_qs(parsed_url.query).items()
+    )
     node['packet_encoding'] = params.get('packetEncoding', 'xudp')
     if params.get('flow'):
         node['flow'] = 'xtls-rprx-vision'
@@ -179,11 +182,11 @@ def vless(parsed_url):
         }
         if params.get('allowInsecure') == '0':
             node['tls']['insecure'] = False
-        node['tls']['server_name'] = params.get('sni', '')[0] or params.get('peer', '')[0]
+        node['tls']['server_name'] = params.get('sni', '') or params.get('peer', '')
         if params.get('fp'):
             node['tls']['utls'] = {
                 'enabled': True,
-                'fingerprint': params['fp'][0]
+                'fingerprint': params['fp']
             }
         if params['security'] == 'reality':
             node['tls']['reality'] = {
@@ -219,7 +222,7 @@ def vless(parsed_url):
         if params['type'] == 'grpc':
             node['transport'] = {
                 'type':'grpc',
-                'service_name':params.get('path', '')
+                'service_name': params.get('sni', ''),
             }
     if params.get('protocol'):
         node['multiplex'] = {

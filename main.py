@@ -7,6 +7,7 @@ import json
 import os
 import sys
 import shutil
+import logging
 from flask import Flask, request
 from utils.singbox import generate_sing_box_config
 from utils.tool import cached_multi_threaded_get
@@ -84,4 +85,7 @@ if __name__ == '__main__':
     if not os.path.exists(templates_path) or not os.listdir(templates_path):
         shutil.copytree(default_templates_path, templates_path, dirs_exist_ok=True)
 
+    gunicorn_logger = logging.getLogger('gunicorn.error')
+    app.logger.handlers = gunicorn_logger.handlers
+    app.logger.setLevel(gunicorn_logger.level)
     app.run(host='0.0.0.0', port=5000)

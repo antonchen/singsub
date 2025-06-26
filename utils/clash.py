@@ -49,13 +49,27 @@ def generate_clash_node(node_list):
                 'server': node['server'],
                 'port': node['server_port'],
                 'uuid': node['uuid'],
-                'flow': node['flow'],
                 'servername': node['tls']['server_name'],
                 'tls': node['tls']['enabled'],
                 'packet-encoding': node['packet_encoding'],
                 'udp': True,
                 'skip-cert-verify': False
             }
+            if 'flow' in node:
+                clash_node['flow'] = node['flow']
+            if 'utls' in node['tls']:
+                if 'fingerprint' in node['tls']['utls']:
+                    clash_node['client-fingerprint'] = node['tls']['utls']['fingerprint']
+            if 'reality' in node['tls']:
+                clash_node['reality-opts'] = {}
+                clash_node['reality-opts']['public-key'] = node['tls']['reality']['public_key']
+                clash_node['reality-opts']['short-id'] = node['tls']['reality']['short_id']
+            if 'transport' in node:
+                if node['transport']['type'] == 'grpc':
+                    clash_node['skip-cert-verify'] = True
+                    clash_node['network'] = 'grpc'
+                    clash_node['grpc-opts'] = {}
+                    clash_node['grpc-opts']['grpc-service-name'] = node['transport']['service_name']
         elif node['type'] == 'shadowsocks':
             clash_node = {
                 'type': 'ss',
